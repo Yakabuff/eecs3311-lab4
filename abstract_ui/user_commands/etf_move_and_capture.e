@@ -27,26 +27,30 @@ feature -- command
 			then
 				model.set_error("Error: Game already over")
 			elseif
+				r1=r2 and c1 = c2
+			then
+				model.set_error("Error: Invalid move of Q from ("+r1.out+", "+ c1.out+") to ("+r2.out+","+ c2.out+")")
+			elseif
 				r1>4 or r1 <1 or c1 > 4 or c1 < 1
 			then
-				model.set_error("Error:  not a valid slot")
+				model.set_error("Error: ("+r1.out + ", " + c1.out+") not a valid slot")
 			elseif
 				 r2 > 4 or r2 <1 or c2 >4 or c2 < 1
 			then
-				model.set_error("Error:  not a valid slot")
+				model.set_error("Error: ("+r2.out + ", " + c2.out+") not a valid slot")
 			elseif
 				model.board[r1,c1] ~ "."
 			then
-				model.set_error("  Error: Slot @r1c1  not occupied")
+				model.set_error("Error: Slot @ ("+r1.out+", "+ c1.out+") not occupied")
 			elseif
 				model.board[r2,c2] ~ "."
 			then
-				model.set_error("  Error: Slot @r2c2  not occupied")
+				model.set_error("Error: Slot @ ("+r2.out+", "+ c2.out+") not occupied")
 			elseif
 				--check if valid move
 				check_valid(r1,c1,r2,c2) = False
 			then
-				model.set_error("Error: Invalid move of B from (4, 3) to (1, 4)")
+				model.set_error("Error: Invalid move of B from ("+r1.out+", " + r2.out+") to (1, 4)")
 			elseif
 
 				check_block(r1,c1,r2,c2)

@@ -71,33 +71,10 @@ feature
 		end
 
 	blocked(r:INTEGER;c:INTEGER):BOOLEAN
-		local
-			tmp:ARRAY[TUPLE[r:INTEGER;c:INTEGER]]
-			canMove:BOOLEAN
+
 		do
-			tmp := moves
-			canMove:=True
-			if
-				row= r and col = c
-			then
-				canMove:= False and canMove
-			end
 
-			if
-				c=col+1 and r = row-1 and access.m.board[r,c] /~ '.'
-			then
-				canMove:= True and canMove
-			elseif
-				c=col-1 and r = row-1 and access.m.board[r,c] /~ '.'
-			then
-				canMove:= True and canMove
-			else
-
-				canMove:= False and canMove
-			end
-
-
-			Result:=canMove
+			Result:=False
 		end
 
 	out:STRING

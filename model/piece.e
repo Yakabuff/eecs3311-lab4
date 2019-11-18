@@ -49,4 +49,16 @@ feature
 	set_pos(r,c:INTEGER)
 		deferred end
 
+	valid_move(r,c:INTEGER):BOOLEAN
+		local
+			posMoves:ARRAY[TUPLE[r:INTEGER;c:INTEGER]]
+		do
+			posMoves := moves
+			Result:= across
+				1 |..| posMoves.upper is curr
+			some
+				posMoves[curr].r = r and posMoves[curr].c = c
+			end
+		end
+
 end

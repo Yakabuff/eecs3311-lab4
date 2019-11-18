@@ -27,6 +27,9 @@ feature {NONE} -- Initialization
 			create movesBoard.make_filled (".", 4, 4)
 			gameStarted := False
 			checkingMoves:=False
+			gameSettingUp:=TRUE
+			gameloss:=FALSE
+			gamewondisplayed :=0
 			pieces:=0
 		end
 
@@ -40,7 +43,9 @@ feature -- model attributes
 	pieces:INTEGER
 	error:STRING
 	gamewon:BOOLEAN
+	gamewondisplayed:INTEGER
 	gameloss:BOOLEAN
+	gameSettingUp:BOOLEAN
 feature -- model operations
 	default_update
 			-- Perform update to the model state.
@@ -56,6 +61,8 @@ feature -- model operations
 			gamewon:=FALSE
 			gameloss:=FALSE
 			gameStarted:=FALSE
+			gamewondisplayed := 0
+			gameSettingUp:=TRUE
 		end
 
 	moves(row: INTEGER_32 ; col: INTEGER_32)
@@ -127,50 +134,122 @@ feature -- model operations
 					gameloss:=TRUE
 				end
 			end
+
+		find_pieces:ARRAY[PIECE]
+			local
+				availPiece:ARRAY[PIECE]
+				piece:PIECE
+			do
+				create availPiece.make_empty
+				across
+					1 |..| board.height is k
+				loop
+					across
+						1 |..| board.width	 is j
+					loop
+						if
+							board[k,j] /~ "."
+						then
+							check attached {PIECE} board[k,j] as p then piece := p end
+							availPiece.force (piece, availPiece.count+1)
+						end
+
+					end
+				end
+				Result := availPiece
+			end
+
 		check_loss:BOOLEAN
+			--get all pieces on board
+			--check each spot on board and check if theres a piece in that pieces valid moves
 			local
 				piece:PIECE
 				loss:BOOLEAN
+				availPiece:ARRAY[PIECE]
+				posMoves:ARRAY[TUPLE[r:INTEGER;c:INTEGER]]
 			do
-
+				availPiece := find_pieces
+				Result:=
 				across
-					board as v
-				loop
-					if
-						v.item.out /~ "."
-					then
-						check attached {PIECE} v as p then piece := p end
-						if
-							piece.moves.count = 0
-						then
-							Result:= TRUE
+					1 |..| availPiece.upper is currPiece
+				all
+
+
+					across
+						1 |..| 4 is y
+					some
+						across
+							1 |..| 4 is x
+						some
+
+--							check attached {PIECE} availPiece[currPiece] as p then piece := p end
+--							board[y,x] = availPiece[currPiece].valid_move(y,x)
+							across
+								1 |..| availPiece[currPiece].moves.upper is t
+							all
+								board[availPiece[currPiece].moves[t].r, availPiece[currPiece].moves[t].c] ~ "."
+							end
+
 						end
 					end
-
 				end
 			end
+
+
 		start_game
 			do
+				gameSettingUp:=FALSE
 				gamestarted :=TRUE
 				if
 					pieces=1
 				then
 					gamewon:=TRUE
 				end
+--				gameloss := check_loss
 			end
 feature -- queries
 	out : STRING
 		do
 			create Result.make_from_string ("  ")
+			Result.append ("# of chess pieces on board: ")
+			Result.append (pieces.out)
 			Result.append ("%N")
 
 
 			if
 				checkingMoves=False
 			then
+
+				Result.append("  ")
+				if
+					not error.is_empty
+				then
+					Result.append(error)
+				elseif
+					gamewon and gamewondisplayed = 0
+				then
+					Result.append ("Game Over: You Win!")
+					gamewondisplayed := 1
+				elseif
+					gameloss=TRUE
+				then
+					Result.append ("Game Over: You Lose!")
+
+				elseif
+					gameSettingUp
+				then
+					Result.append("Game being Setup...")
+				elseif
+					gamestarted
+				then
+					Result.append("Game In Progress...")
+				end
+
+				Result.append ("%N")
+
 				across
 				1 |..| board.height is k
-			loop
+				loop
 				Result.append("  ")
 				across
 					1 |..| board.width is j
@@ -186,16 +265,28 @@ feature -- queries
 				end
 
 			end
+
+			else
+				Result.append("  ")
 				if
-					gamewon
+				not error.is_empty
+				then
+				Result.append(error)
+				elseif
+					gamestarted
+				then
+					Result.append("Game In Progress...")
+				elseif
+					gamewon and gamewondisplayed = 0
 				then
 					Result.append ("Game won")
+					gamewondisplayed := 1
 				elseif
-					gameloss
+					gameloss=TRUE
 				then
 					Result.append ("Game lost")
 				end
-			else
+				Result.append ("%N")
 				across
 					1 |..| movesboard.height is k
 				loop
@@ -220,11 +311,11 @@ feature -- queries
 
 
 
-			if
-				not error.is_empty
-			then
-				Result.append(error)
-			end
+--			if
+--				check_loss = TRUE
+--			then
+--				Result.append("GAME LOSS")
+--			end
 
 		end
 

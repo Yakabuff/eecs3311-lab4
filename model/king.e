@@ -16,7 +16,7 @@ create
 	make
 
 feature
-	
+
 	set_pos(r,c:INTEGER)
 		do
 			row:=r
@@ -34,17 +34,17 @@ feature
 		create Result.make_empty
 
 		if
-		(row+1) < 4
+		(row+1) <= 4
 		then
 			Result.force ([row+1, col], (Result.upper+1))
 			if
-				(col-1) >= 0
+				(col-1) >= 1
 			then
 				Result.force ([row+1, col-1], (Result.upper+1))
 			end
 
 			if
-				col+1< 4
+				col+1<= 4
 			then
 				Result.force ([row+1, col+1], (Result.upper+1))
 			end
@@ -55,13 +55,13 @@ feature
 		then
 			Result.force ([row-1, col], (Result.upper+1))
 			if
-				col-1 >= 0
+				col-1 >= 1
 			then
 				Result.force ([row-1, col-1], (Result.upper+1))
 			end
 
 			if
-				(col + 1) < 4
+				(col + 1) <= 4
 			then
 				Result.force ([row-1, col+1], (Result.upper+1))
 			end
@@ -74,7 +74,7 @@ feature
 		end
 
 		if
-			col + 1 < 4
+			col + 1 <= 4
 		then
 			Result.force ([row, col+1], (Result.upper+1))
 		end
@@ -129,7 +129,7 @@ feature
 --				canMove:= False and canMove
 --			end
 
-			Result := TRUE
+			Result := False
 		end
 	out:STRING
 		do
