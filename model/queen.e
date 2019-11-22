@@ -88,7 +88,7 @@ feature
 			1 |..| 4  is k
 		loop
 			if
-				i /= col
+				k /= col
 			then
 				Result.force ([row, k], Result.upper + 1)
 			end
@@ -99,12 +99,14 @@ feature
 			1 |..| 4  is t
 		loop
 			if
-				j /= row
+				t /= row
 			then
 				Result.force ([t, col], Result.upper + 1)
 			end
 
 		end
+
+
 		end
 
 	blocked(r:INTEGER;c:INTEGER):BOOLEAN

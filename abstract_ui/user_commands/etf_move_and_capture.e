@@ -27,9 +27,13 @@ feature -- command
 			then
 				model.set_error("Error: Game already over")
 			elseif
+				model.gameloss=TRUE
+			then
+				model.set_error("Error: Game already over")
+			elseif
 				r1=r2 and c1 = c2
 			then
-				model.set_error("Error: Invalid move of Q from ("+r1.out+", "+ c1.out+") to ("+r2.out+","+ c2.out+")")
+				model.set_error("Error: Invalid move of "+ model.board[r1,c1].out +" from ("+r1.out+", "+ c1.out+") to ("+r2.out+", "+ c2.out+")")
 			elseif
 				r1>4 or r1 <1 or c1 > 4 or c1 < 1
 			then
@@ -50,12 +54,12 @@ feature -- command
 				--check if valid move
 				check_valid(r1,c1,r2,c2) = False
 			then
-				model.set_error("Error: Invalid move of B from ("+r1.out+", " + r2.out+") to (1, 4)")
+				model.set_error("Error: Invalid move of "+ model.board[r1,c1].out+ " from ("+r1.out+", " + c1.out+") to ("+r2.out+", "+ c2.out+")")
 			elseif
 
 				check_block(r1,c1,r2,c2)
 			then
-				model.set_error("Error: Block exists between (4, 3) and (2, 1)")
+				model.set_error("Error: Block exists between ("+r1.out+", "+c1.out+") and ("+r2.out+", "+c2.out+")")
 			else
 			model.move_and_capture(r1,c1,r2,c2)
 			model.rem_error

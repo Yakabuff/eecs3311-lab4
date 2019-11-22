@@ -33,7 +33,7 @@ feature
 			create Result.make_empty
 
 			if
-				(col+2)<=4 and (row+1)<4
+				(col+2)<=4 and (row+1)<=4
 			then
 				Result.force ([row+1,col+2],Result.upper+1)
 			end

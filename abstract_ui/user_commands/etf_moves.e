@@ -22,15 +22,15 @@ feature -- command
 			elseif
 				model.gamewon=TRUE or model.gameloss=TRUE
 			then
-				model.set_error ("Error: game already over")
+				model.set_error ("Error: Game already over")
 			elseif
 				row>4 or row<1 or col>4 or col<1
 			then
-				model.set_error ("Error:  not a valid slot")
+				model.set_error ("Error: ("+row.out+", "+col.out+") not a valid slot")
 			elseif
 				model.board[row,col].out ~ "."
 			then
-				model.set_error ("Error: slot  not occupied")
+				model.set_error ("Error: Slot @ ("+row.out +", "+col.out+") not occupied")
 			else
 				model.moves (row,col)
 				model.rem_error

@@ -31,6 +31,7 @@ feature {NONE} -- Initialization
 			gameloss:=FALSE
 			gamewondisplayed :=0
 			pieces:=0
+			create history.make
 		end
 
 feature -- model attributes
@@ -46,6 +47,7 @@ feature -- model attributes
 	gamewondisplayed:INTEGER
 	gameloss:BOOLEAN
 	gameSettingUp:BOOLEAN
+	history:LINKED_LIST[COMMAND]
 feature -- model operations
 	default_update
 			-- Perform update to the model state.
@@ -63,6 +65,7 @@ feature -- model operations
 			gameStarted:=FALSE
 			gamewondisplayed := 0
 			gameSettingUp:=TRUE
+			pieces:=0
 		end
 
 	moves(row: INTEGER_32 ; col: INTEGER_32)
@@ -129,7 +132,7 @@ feature -- model operations
 				end
 
 				if
-					check_loss = TRUE
+					check_loss = TRUE and pieces > 1
 				then
 					gameloss:=TRUE
 				end
@@ -161,38 +164,47 @@ feature -- model operations
 
 		check_loss:BOOLEAN
 			--get all pieces on board
-			--check each spot on board and check if theres a piece in that pieces valid moves
+			--check each spot on board and check each possible move for that piece for a "." (each square is not a move for the piece)
 			local
 				piece:PIECE
 				loss:BOOLEAN
 				availPiece:ARRAY[PIECE]
 				posMoves:ARRAY[TUPLE[r:INTEGER;c:INTEGER]]
+
 			do
 				availPiece := find_pieces
-				Result:=
-				across
-					1 |..| availPiece.upper is currPiece
-				all
 
-
+				if
 					across
-						1 |..| 4 is y
-					some
+						1 |..| availPiece.upper is currPiece
+					all
+
 						across
-							1 |..| 4 is x
-						some
-
---							check attached {PIECE} availPiece[currPiece] as p then piece := p end
---							board[y,x] = availPiece[currPiece].valid_move(y,x)
-							across
-								1 |..| availPiece[currPiece].moves.upper is t
-							all
-								board[availPiece[currPiece].moves[t].r, availPiece[currPiece].moves[t].c] ~ "."
-							end
-
+							1 |..| availPiece[currPiece].moves.upper is t
+						all
+							board[availPiece[currPiece].moves[t].r, availPiece[currPiece].moves[t].c] ~ "." or availPiece[currPiece].blocked(availPiece[currPiece].moves[t].r,availPiece[currPiece].moves[t].c)
 						end
 					end
+				then
+					loss:=True
+--				else
+--					loss:=
+--					across
+--						1 |..| availPiece.upper is currPiece
+--					all
+
+
+--						across
+--							1 |..| availPiece[currPiece].moves.upper is t
+--						all
+
+--							availPiece[currPiece].blocked(availPiece[currPiece].moves[t].r,availPiece[currPiece].moves[t].c)
+--						end
+--					end
+
 				end
+
+				Result:=loss
 			end
 
 
@@ -206,6 +218,15 @@ feature -- model operations
 					gamewon:=TRUE
 				end
 --				gameloss := check_loss
+			end
+		undo
+			do
+
+			end
+
+		redo
+			do
+
 			end
 feature -- queries
 	out : STRING
@@ -231,7 +252,7 @@ feature -- queries
 					Result.append ("Game Over: You Win!")
 					gamewondisplayed := 1
 				elseif
-					gameloss=TRUE
+					gameloss
 				then
 					Result.append ("Game Over: You Lose!")
 
@@ -282,7 +303,7 @@ feature -- queries
 					Result.append ("Game won")
 					gamewondisplayed := 1
 				elseif
-					gameloss=TRUE
+					gameloss
 				then
 					Result.append ("Game lost")
 				end
@@ -315,6 +336,7 @@ feature -- queries
 --				check_loss = TRUE
 --			then
 --				Result.append("GAME LOSS")
+
 --			end
 
 		end
