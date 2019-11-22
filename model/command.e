@@ -12,15 +12,16 @@ feature--attribute
 	row:INTEGER
 	col:INTEGER
 
-feature
-	make
-		do
-
-		end
 
 feature --execute undo redo
-execute deferred end
-undo deferred end
-redo deferred end
+	execute
+		deferred
+		end
+	undo
+		deferred
+		end
+	redo
+		deferred
+		end
 
 end

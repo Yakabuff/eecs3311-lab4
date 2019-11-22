@@ -32,6 +32,7 @@ feature {NONE} -- Initialization
 			gamewondisplayed :=0
 			pieces:=0
 			create history.make
+			test:=FALSE
 		end
 
 feature -- model attributes
@@ -48,6 +49,7 @@ feature -- model attributes
 	gameloss:BOOLEAN
 	gameSettingUp:BOOLEAN
 	history:LINKED_LIST[COMMAND]
+	test:BOOLEAN
 feature -- model operations
 	default_update
 			-- Perform update to the model state.
@@ -136,6 +138,7 @@ feature -- model operations
 				then
 					gameloss:=TRUE
 				end
+
 			end
 
 		find_pieces:ARRAY[PIECE]
@@ -207,7 +210,14 @@ feature -- model operations
 				Result:=loss
 			end
 
-
+		decNumPieces
+			do
+				pieces:= pieces-1
+			end
+		addNumPieces
+			do
+				pieces:=pieces+1
+			end
 		start_game
 			do
 				gameSettingUp:=FALSE
@@ -220,13 +230,40 @@ feature -- model operations
 --				gameloss := check_loss
 			end
 		undo
+			local
+				command:COMMAND
 			do
+				if
+					not history.is_empty
+
+				then
+					command :=history.item
+					command.undo
+					history.back
+					test:=TRUE
+
+				end
 
 			end
 
 		redo
+			local
+				command:COMMAND
 			do
-
+				if
+					history.before
+				then
+				elseif
+					not(history.before or history.islast)
+				then
+					history.forth
+					command := history.item
+					command.redo
+				end
+			end
+		clear_history
+			do
+				create history.make
 			end
 feature -- queries
 	out : STRING
@@ -331,7 +368,7 @@ feature -- queries
 			end
 
 
-
+			Result.append (test.out)
 --			if
 --				check_loss = TRUE
 --			then

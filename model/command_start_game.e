@@ -11,11 +11,17 @@ inherit
 	COMMAND
 create
 	make
-
+feature
+	gameStarted:BOOLEAN
+feature
+	make
+		do
+			gameStarted:= access.m.gamestarted
+		end
 feature
 	execute
 		do
-
+			access.m.start_game
 		end
 
 	undo

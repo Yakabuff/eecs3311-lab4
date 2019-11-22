@@ -13,6 +13,7 @@ create
 feature -- command
 	move_and_capture(r1: INTEGER_32 ; c1: INTEGER_32 ; r2: INTEGER_32 ; c2: INTEGER_32)
 		local
+			c_m:COMMAND_MOVE_AND_CAPTURE
 			piece:PIECE
 			posMoves:ARRAY[TUPLE[r:INTEGER;c:INTEGER]]
     	do
@@ -61,7 +62,9 @@ feature -- command
 			then
 				model.set_error("Error: Block exists between ("+r1.out+", "+c1.out+") and ("+r2.out+", "+c2.out+")")
 			else
-			model.move_and_capture(r1,c1,r2,c2)
+			create {COMMAND_MOVE_AND_CAPTURE} c_m.make (r1, r2, c1, c2)
+			c_m.execute
+--			model.move_and_capture(r1,c1,r2,c2)
 			model.rem_error
 			end
 			etf_cmd_container.on_change.notify ([Current])

@@ -14,7 +14,8 @@ feature -- command
 	setup_chess(c: INTEGER_32 ; row: INTEGER_32 ; col: INTEGER_32)
 		require else
 			setup_chess_precond(c, row, col)
-
+		local
+			s_g:COMMAND_SETUP_GAME
     	do
     					----ERROR CHECKING---
 			if
@@ -33,32 +34,44 @@ feature -- command
 			else
 			-- perform some update on the model state
 			if c = K then
-				model.setup(create {KING}.make(row, col))
+				--model.setup(create {KING}.make(row, col))
+				create {COMMAND_SETUP_GAME} s_g.make (create {KING}.make(row, col))
+				s_g.execute
 				model.rem_error
 			elseif
 				c=Q
 			then
-				model.setup(create {QUEEN}.make (row, col))
+--				model.setup(create {QUEEN}.make (row, col))
+				create {COMMAND_SETUP_GAME} s_g.make (create {QUEEN}.make(row, col))
+				s_g.execute
 				model.rem_error
 			elseif
 				c=N
 			then
-				model.setup(create {KNIGHT}.make (row, col))
+--				model.setup(create {KNIGHT}.make (row, col))
+				create {COMMAND_SETUP_GAME} s_g.make (create {KNIGHT}.make(row, col))
+				s_g.execute
 				model.rem_error
 			elseif
 				c=B
 			then
-				model.setup(create {BISHOP}.make (row, col))
+--				model.setup(create {BISHOP}.make (row, col))
+				create {COMMAND_SETUP_GAME} s_g.make (create {BISHOP}.make(row, col))
+				s_g.execute
 				model.rem_error
 			elseif
 				c=R
 			then
-				model.setup(create {ROOK}.make (row, col))
+--				model.setup(create {ROOK}.make (row, col))
+				create {COMMAND_SETUP_GAME} s_g.make (create {ROOK}.make(row, col))
+				s_g.execute
 				model.rem_error
 			elseif
 				c=P
 			then
-				model.setup(create {PAWN}.make (row, col))
+--				model.setup(create {PAWN}.make (row, col))
+				create {COMMAND_SETUP_GAME} s_g.make (create {PAWN}.make(row, col))
+				s_g.execute
 				model.rem_error
 			end
 
