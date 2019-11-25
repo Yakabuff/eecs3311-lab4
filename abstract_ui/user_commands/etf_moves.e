@@ -12,6 +12,8 @@ create
 	make
 feature -- command
 	moves(row: INTEGER_32 ; col: INTEGER_32)
+		local
+			m_s:COMMAND_MOVES
     	do
 			-- perform some update on the model state
 
@@ -32,7 +34,9 @@ feature -- command
 			then
 				model.set_error ("Error: Slot @ ("+row.out +", "+col.out+") not occupied")
 			else
-				model.moves (row,col)
+				create {COMMAND_MOVES} m_s.make (row,col)
+				m_s.execute
+				--model.moves (row,col)
 				model.rem_error
 			end
 

@@ -15,7 +15,15 @@ feature -- command
 	redo
     	do
 			-- perform some update on the model state
-			model.redo
+			if
+				model.history.index =model.history.count
+			then
+				model.set_error ("Error: Nothing to redo")
+			else
+				model.redo
+				model.rem_error
+			end
+
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

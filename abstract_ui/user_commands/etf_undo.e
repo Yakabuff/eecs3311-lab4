@@ -15,7 +15,15 @@ feature -- command
 	undo
     	do
 			-- perform some update on the model state
-			model.undo
+			if
+				model.history.index< 1 or model.pieces = 0 and not model.gamestarted
+			then
+				model.set_error ("Error: Nothing to undo")
+			else
+				model.undo
+				model.rem_error
+			end
+
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

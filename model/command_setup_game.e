@@ -21,25 +21,35 @@ feature
 		do
 
 			piece:=c
+			row := c.row
+			col:= c.col
 		end
 feature
 	execute
 		do
-			access.m.setup (piece)
+
 
 			access.m.history.extend (Current)
 			access.m.history.forth
+			access.m.setup (piece)
+
+			access.m.rem_error
 		end
 
 	undo
 		do
-			access.m.board.put (".",piece.row, piece.col)
+
+			access.m.board[row, col] := "."
 			access.m.decnumpieces
+--			access.m.history.back
 
 		end
 
 	redo
 		do
-			execute
+
+			access.m.board[row, col] := piece
+			access.m.addnumpieces
+			access.m.rem_error
 		end
 end

@@ -12,6 +12,8 @@ create
 	make
 feature -- command
 	reset_game
+		local
+			R_G:COMMAND_RESET_GAME
     	do
 			-- perform some update on the model state
 			if
@@ -19,7 +21,9 @@ feature -- command
 			then
 				model.set_error ("Error: Game not yet started")
 			else
-				model.reset
+--				model.reset
+				create {COMMAND_RESET_GAME} R_G.make
+				R_G.execute
 				model.rem_error
 			end
 

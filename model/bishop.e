@@ -93,6 +93,11 @@ feature
 			if   --up left
 				row > r and col > c
 			then
+				if
+					row -r =1 and col -c = 1
+				then
+					isBlocked := False
+				else
 				from
 					i := col-1
 					 j:=row-1
@@ -103,11 +108,16 @@ feature
 					i:=i+1
 					j:=j-1
 
-
+				end
 				end
 			elseif  --up right
 				row > r and col < c
 			then
+				if
+					row -r =1 and c- col = 1
+				then
+					isBlocked := False
+				else
 				from
 					i := col+1
 					 j:=row-1
@@ -118,9 +128,15 @@ feature
 					i:=i+1
 					j:=j-1
 				end
+				end
 			elseif	--down left
 				row < r and col > c
 			then
+				if
+					r -row =1 and col -c = 1
+				then
+					isBlocked := False
+				else
 				from
 					i := col-1
 					 j:=row+1
@@ -131,9 +147,15 @@ feature
 					i:=i+1
 					j:=j-1
 				end
+				end
 			elseif --down right
 				row < r and col < c
 			then
+				if
+					r -row =1 and c -col = 1
+				then
+					isBlocked := False
+				else
 				from
 					i := col+1
 					 j:=row+1
@@ -143,6 +165,7 @@ feature
 					isblocked := access.m.board[j,i]/~"."
 					i:=i+1
 					j:=j+1
+				end
 				end
 			end
 		Result:=isblocked

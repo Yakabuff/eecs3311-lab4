@@ -50,6 +50,9 @@ feature -- model attributes
 	gameSettingUp:BOOLEAN
 	history:LINKED_LIST[COMMAND]
 	test:BOOLEAN
+	currHistoryIndex:INTEGER
+	currHistoryRow:INTEGER
+	currHistoryCol:INTEGER
 feature -- model operations
 	default_update
 			-- Perform update to the model state.
@@ -67,6 +70,7 @@ feature -- model operations
 			gameStarted:=FALSE
 			gamewondisplayed := 0
 			gameSettingUp:=TRUE
+			create history.make
 			pieces:=0
 		end
 
@@ -104,7 +108,22 @@ feature -- model operations
 				pieces := pieces + 1
 
 			end
-
+		setWin
+			do
+				gamewon := True
+			end
+		setLoss
+			do
+				gameloss :=True
+			end
+		unsetwin
+			do
+				gamewon:=False
+			end
+		unsetLoss
+			do
+				gameloss := False
+			end
 		set_error(err:STRING)
 			do
 				error := err
@@ -209,7 +228,10 @@ feature -- model operations
 
 				Result:=loss
 			end
-
+		undogamewondisplayed
+			do
+				gamewondisplayed := gamewondisplayed -1
+			end
 		decNumPieces
 			do
 				pieces:= pieces-1
@@ -226,9 +248,20 @@ feature -- model operations
 					pieces=1
 				then
 					gamewon:=TRUE
+				elseif
+					pieces = 0
+				then
+					gameloss := TRUE
 				end
 --				gameloss := check_loss
 			end
+		unstart_game
+			do
+				gameSettingUp:=TRUE
+				gamestarted :=FALSE
+				gamewon:=False
+			end
+
 		undo
 			local
 				command:COMMAND
@@ -239,7 +272,13 @@ feature -- model operations
 				then
 					command :=history.item
 					command.undo
-					history.back
+
+					if
+						history.index >0
+					then
+						history.back
+					end
+
 					test:=TRUE
 
 				end
@@ -250,16 +289,16 @@ feature -- model operations
 			local
 				command:COMMAND
 			do
+--				history.forth
 				if
-					history.before
-				then
-				elseif
-					not(history.before or history.islast)
+					history.index < history.count
 				then
 					history.forth
-					command := history.item
-					command.redo
 				end
+				command := history.item
+				command.redo
+
+
 			end
 		clear_history
 			do
@@ -367,8 +406,14 @@ feature -- queries
 
 			end
 
+--				if
+--					history.count = 7
+--				then
+--					Result.append (currHistoryRow.out + " " + currHistoryCol.out)
+--				end
 
-			Result.append (test.out)
+
+
 --			if
 --				check_loss = TRUE
 --			then
